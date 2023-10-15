@@ -13,7 +13,7 @@ variables:
 
   sourceSynapse: '' # name of the source Synapse instance
   
-  destSynapseRg: '' # name of the resource group for the destination ADF instance
+  destSynapseRg: '' # name of the resource group for the destination Synapse instance
   destSynapse: '' # name of the destination Synapse instance
   
   # Override parameters for the destination Synapse instance
