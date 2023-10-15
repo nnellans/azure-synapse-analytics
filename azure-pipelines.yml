@@ -1,5 +1,5 @@
 # Example pipeline to do CI/CD for Azure Synapse Analytics
-# Read more here:  https://www.nathannellans.com/post/xxxxxx
+# Read more here:  https://www.nathannellans.com/post/ci-cd-with-azure-synapse-analytics
 
 # NOTE: the tasks below will not work unless you install this extension into your Azure DevOps Organization:
 # https://marketplace.visualstudio.com/items?itemName=AzureSynapseWorkspace.synapsecicd-deploy
