@@ -3,45 +3,32 @@ steps:
 # optional full task name: AzureSynapseWorkspace.synapsecicd-deploy.toggle-trigger.toggle-triggers-dev@2
 - task: toggle-triggers-dev@2
   inputs:
-    azureSubscription: nnazidPipelines # ADO service connection
-    ResourceGroupName: dfdf # rg of the synapse workspace you're deploying into
-    WorkspaceName: dfdf # name of the synapse workspace you're deploying into
-    ToggleOn: false # turns triggers off
-    Triggers: 'jim,bob' # comma-separated list of triggers to operate on. optional, default is '*'
+    azureSubscription: 'serviceConnection' # Specify the Azure DevOps Service Connection with access to deploy to the target Synapse workspace
+    ResourceGroupName: 'rgName' # Provide the name of the resource group that contains the target Synapse Workspace
+    WorkspaceName: 'synapseWorkspaceName' # Enter the Synapse workspace name located in the resource group that you specified
+    ToggleOn: false # False to toggle triggers off
+    Triggers: 'trigger1,trigger2' # Comma separated triggers to be toggled. '*' for all triggers. Optional, default is '*'
 
 # optional full task name: AzureSynapseWorkspace.synapsecicd-deploy.synapse-deploy.Synapse workspace deployment@2
 # Deploy
 - task: Synapse workspace deployment@2
   inputs:
-    operation: Deploy # optional. default is 'Deploy'
-    TemplateFile: # the published JSON template in the 'workspace_publish' branch
-    ParametersFile: # the publish parameters file in the 'workspace_publish' branch
-    azureSubscription: nnazidPipelines # ADO service connection
-    ResourceGroupName: asdfdasf # rg of the synapse workspace you're deploying into
-    TargetWorkspaceName: asdfasdf # name of the synapse workspace you're deploying into
-    DeleteArtifactsNotInTemplate: true
-    DeployManagedPrivateEndpoints: true
-    OverrideArmParameters: dfdf
-    FailOnMissingOverrides: true
-
-- task: Synapse workspace deployment@2
-  displayName: 'Synpase deployment task for workspace: asdfasdf'
-  inputs:
-    operation: validateDeploy
-    ArtifactsFolder: dfdfd # the collaboration branch, typically the 'main' branch
-    azureSubscription: nnazidPipelines # ADO service connection
-    ResourceGroupName: asdfdasf # rg of the synapse workspace you're deploying into
-    TargetWorkspaceName: asdfasdf # name of the synapse workspace you're deploying into
-    DeleteArtifactsNotInTemplate: true
-    DeployManagedPrivateEndpoints: true
-    OverrideArmParameters: dfdf
-    FailOnMissingOverrides: true
+    operation: 'deploy' # Select the operation to be performed. Optional, default is 'Deploy'
+    TemplateFile: 'path/to/TemplateForWorkspace.json' # Specify the path or a pattern pointing to the ARM template from the 'workspace_publish' branch
+    ParametersFile: 'path/to/TemplateParametersForWorkspace.json' # Specify the path or a pattern pointing to the parameters file for the ARM template from the 'workspace_publish' branch
+    azureSubscription: 'serviceConnection' # Specify the Azure DevOps Service Connection with access to deploy to the target Synapse workspace
+    ResourceGroupName: 'rgName' # Specify the resource group of the target Synapse workspace
+    TargetWorkspaceName: 'synapseWorkspaceName' # Enter the Synapse workspace name located in the resource group that you specified
+    DeleteArtifactsNotInTemplate: true # If true, all artifacts in the workspace, not present in the template will be deleted. sqlpools, sparkpools, integration runtimes will not be deleted
+    DeployManagedPrivateEndpoints: true # If true, the extension will deploy all managed private endpoints in the template.
+    OverrideArmParameters: '-key1 value1 -key2 value2' # Enter any ARM parameters that you want to override, separated by a space
+    FailOnMissingOverrides: true # If true, the extension will fail if ARM overrides are not provided
 
 # optional full task name: AzureSynapseWorkspace.synapsecicd-deploy.toggle-trigger.toggle-triggers-dev@2
 - task: toggle-triggers-dev@2
   inputs:
-    azureSubscription: nnazidPipelines # ADO service connection
-    ResourceGroupName: dfdf # rg of the synapse workspace you're deploying into
-    WorkspaceName: dfdf # name of the synapse workspace you're deploying into
-    ToggleOn: true # turns triggers on
-    Triggers: 'jim,bob' # comma-separated list of triggers to operate on. optional, default is '*'
+    azureSubscription: 'serviceConnection' # Specify the Azure DevOps Service Connection with access to deploy to the target Synapse workspace
+    ResourceGroupName: 'rgName' # Provide the name of the resource group that contains the target Synapse Workspace
+    WorkspaceName: 'synapseWorkspaceName' # Enter the Synapse workspace name located in the resource group that you specified
+    ToggleOn: true # True to toggle triggers on
+    Triggers: 'trigger1,trigger2' # Comma separated triggers to be toggled. '*' for all triggers. Optional, default is '*'
