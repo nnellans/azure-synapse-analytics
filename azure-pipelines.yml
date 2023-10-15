@@ -7,8 +7,6 @@
 trigger: 'none' # disable CI trigger
 pr: 'none' # disable PR trigger
 
-parameters:
-
 #!! UPDATE THESE VARIABLES TO MATCH YOUR ENVIRONMENT
 variables:
   azureServiceConnection: '' # Azure DevOps 'Service Connection' of type Azure Resource Manager
