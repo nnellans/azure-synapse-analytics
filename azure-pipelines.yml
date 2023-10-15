@@ -40,9 +40,9 @@ steps:
 
 # checks out the workspace_publish branch where the Synapse templates are stored
 # the settings for this repo are defined above, in the 'resources' section
-# checks out to relative path 's\synapseTemplates' so that we can access it via $(System.DefaultWorkingDirectory)\synapseTemplates
+# checks out to relative path 's/synapseTemplates' so that we can access it via $(System.DefaultWorkingDirectory)/synapseTemplates
 - checkout: 'synapseTemplates'
-  path: 's\synapseTemplates'
+  path: 's/synapseTemplates'
 
 steps:
 
@@ -59,8 +59,8 @@ steps:
 - task: Synapse workspace deployment@2
   inputs:
     operation: 'deploy' # Optional, default is 'Deploy'
-    TemplateFile: '$(System.DefaultWorkingDirectory)\synapseTemplates\TemplateForWorkspace.json'
-    ParametersFile: '$(System.DefaultWorkingDirectory)\synapseTemplates\TemplateParametersForWorkspace.json'
+    TemplateFile: '$(System.DefaultWorkingDirectory)/synapseTemplates/$(sourceSynapse)/TemplateForWorkspace.json'
+    ParametersFile: '$(System.DefaultWorkingDirectory)/synapseTemplates/$(sourceSynapse)/TemplateParametersForWorkspace.json'
     azureSubscription: '$(azureServiceConnection)'
     ResourceGroupName: '$(destSynapseRg)'
     TargetWorkspaceName: '$(destSynapse)'
