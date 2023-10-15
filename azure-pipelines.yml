@@ -18,7 +18,7 @@ variables:
   
   # Override parameters for the destination Synapse instance
   destSynapseParams: >-
-    -factoryName $(destSynapse)
+    -workspaceName $(destSynapse)
     -key value
     -key value
 
