@@ -1,37 +1,79 @@
-# NOTE: these tasks will not work unless you install the extension into your Azure DevOps Organization
+# Example pipeline to do CI/CD for Azure Synapse Analytics
+# Read more here:  https://www.nathannellans.com/post/xxxxxx
+
+# NOTE: the tasks below will not work unless you install this extension into your Azure DevOps Organization:
 # https://marketplace.visualstudio.com/items?itemName=AzureSynapseWorkspace.synapsecicd-deploy
+
+trigger: 'none' # disable CI trigger
+pr: 'none' # disable PR trigger
+
+parameters:
+
+#!! UPDATE THESE VARIABLES TO MATCH YOUR ENVIRONMENT
+variables:
+  azureServiceConnection: '' # Azure DevOps 'Service Connection' of type Azure Resource Manager
+
+  sourceSynapse: '' # name of the source Synapse instance
+  
+  destSynapseRg: '' # name of the resource group for the destination ADF instance
+  destSynapse: '' # name of the destination Synapse instance
+  
+  # Override parameters for the destination Synapse instance
+  destSynapseParams: >-
+    -factoryName $(destSynapse)
+    -key value
+    -key value
+
+resources:
+  repositories:
+  #!! UPDATE THIS TO MATCH YOUR ENVIRONMENT
+  - repository: 'synapseTemplates'
+    type: 'github'
+    name: 'nnellans/azure-synapse-analytics' # github repo where the workspace_publish branch is located
+    ref: 'workspace_publish' # name of the publish branch
+    endpoint: '' # Azure DevOps 'Service Connection' of type GitHub
+
+pool:
+  vmImage: 'ubuntu-latest'
 
 steps:
 
-# optional full task name: AzureSynapseWorkspace.synapsecicd-deploy.toggle-trigger.toggle-triggers-dev@2
+# checks out the workspace_publish branch where the Synapse templates are stored
+# the settings for this repo are defined above, in the 'resources' section
+# checks out to relative path 's\synapseTemplates' so that we can access it via $(System.DefaultWorkingDirectory)\synapseTemplates
+- checkout: 'synapseTemplates'
+  path: 's\synapseTemplates'
+
+steps:
+
+# Disable Triggers
 - task: toggle-triggers-dev@2
   inputs:
-    azureSubscription: 'serviceConnection' # Specify the Azure DevOps Service Connection with access to deploy to the target Synapse workspace
-    ResourceGroupName: 'rgName' # Provide the name of the resource group that contains the target Synapse Workspace
-    WorkspaceName: 'synapseWorkspaceName' # Enter the Synapse workspace name located in the resource group that you specified
+    azureSubscription: '$(azureServiceConnection)'
+    ResourceGroupName: '$(destSynapseRg)'
+    WorkspaceName: '$(destSynapse)'
     ToggleOn: false # False to toggle triggers off
     Triggers: 'trigger1,trigger2' # Comma separated triggers to be toggled. '*' for all triggers. Optional, default is '*'
 
-# optional full task name: AzureSynapseWorkspace.synapsecicd-deploy.synapse-deploy.Synapse workspace deployment@2
-# Deploy
+# Deploy Synapse artifacts to another environment
 - task: Synapse workspace deployment@2
   inputs:
-    operation: 'deploy' # Select the operation to be performed. Optional, default is 'Deploy'
-    TemplateFile: 'path/to/TemplateForWorkspace.json' # Specify the path or a pattern pointing to the ARM template from the 'workspace_publish' branch
-    ParametersFile: 'path/to/TemplateParametersForWorkspace.json' # Specify the path or a pattern pointing to the parameters file for the ARM template from the 'workspace_publish' branch
-    azureSubscription: 'serviceConnection' # Specify the Azure DevOps Service Connection with access to deploy to the target Synapse workspace
-    ResourceGroupName: 'rgName' # Specify the resource group of the target Synapse workspace
-    TargetWorkspaceName: 'synapseWorkspaceName' # Enter the Synapse workspace name located in the resource group that you specified
+    operation: 'deploy' # Optional, default is 'Deploy'
+    TemplateFile: '$(System.DefaultWorkingDirectory)\synapseTemplates\TemplateForWorkspace.json'
+    ParametersFile: '$(System.DefaultWorkingDirectory)\synapseTemplates\TemplateParametersForWorkspace.json'
+    azureSubscription: '$(azureServiceConnection)'
+    ResourceGroupName: '$(destSynapseRg)'
+    TargetWorkspaceName: '$(destSynapse)'
     DeleteArtifactsNotInTemplate: true # If true, all artifacts in the workspace, not present in the template will be deleted. sqlpools, sparkpools, integration runtimes will not be deleted
     DeployManagedPrivateEndpoints: true # If true, the extension will deploy all managed private endpoints in the template.
-    OverrideArmParameters: '-key1 value1 -key2 value2' # Enter any ARM parameters that you want to override, separated by a space
+    OverrideArmParameters: '$(destSynapseParams)'
     FailOnMissingOverrides: true # If true, the extension will fail if ARM overrides are not provided
 
-# optional full task name: AzureSynapseWorkspace.synapsecicd-deploy.toggle-trigger.toggle-triggers-dev@2
+# Enable Triggers
 - task: toggle-triggers-dev@2
   inputs:
-    azureSubscription: 'serviceConnection' # Specify the Azure DevOps Service Connection with access to deploy to the target Synapse workspace
-    ResourceGroupName: 'rgName' # Provide the name of the resource group that contains the target Synapse Workspace
-    WorkspaceName: 'synapseWorkspaceName' # Enter the Synapse workspace name located in the resource group that you specified
+    azureSubscription: '$(azureServiceConnection)'
+    ResourceGroupName: '$(destSynapseRg)'
+    WorkspaceName: '$(destSynapse)'
     ToggleOn: true # True to toggle triggers on
     Triggers: 'trigger1,trigger2' # Comma separated triggers to be toggled. '*' for all triggers. Optional, default is '*'
