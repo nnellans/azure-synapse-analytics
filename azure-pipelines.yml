@@ -42,8 +42,6 @@ steps:
 - checkout: 'synapseTemplates'
   path: 's/synapseTemplates'
 
-steps:
-
 # Disable Triggers
 - task: toggle-triggers-dev@2
   inputs:
