@@ -1,0 +1,32 @@
+steps:
+
+#- task: AzureSynapseWorkspace.synapsecicd-deploy.toggle-trigger.toggle-triggers-dev@2
+- task: toggle-triggers-dev@2
+  inputs:
+    azureSubscription: nnazidPipelines # ADO service connection
+    ResourceGroupName: dfdf # rg of the synapse workspace you're deploying into
+    WorkspaceName: dfdf # name of the synapse workspace you're deploying into
+    ToggleOn: false # turns triggers off
+    Triggers: 'jim,bob' # optional comma-separated list of triggers to operate on. if omitted, all triggers will be turned off
+
+#- task: AzureSynapseWorkspace.synapsecicd-deploy.synapse-deploy.Synapse workspace deployment@2
+- task: Synapse workspace deployment@2
+  inputs:
+    TemplateFile: # the published JSON template in the 'workspace_publish' branch
+    ParametersFile: # the publish parameters file in the 'workspace_publish' branch
+    azureSubscription: nnazidPipelines # ADO service connection
+    ResourceGroupName: asdfdasf # rg of the synapse workspace you're deploying into
+    TargetWorkspaceName: asdfasdf # name of the synapse workspace you're deploying into
+    DeleteArtifactsNotInTemplate: true
+    DeployManagedPrivateEndpoints: true
+    OverrideArmParameters: dfdf
+    FailOnMissingOverrides: true
+
+#- task: AzureSynapseWorkspace.synapsecicd-deploy.toggle-trigger.toggle-triggers-dev@2
+- task: toggle-triggers-dev@2
+  inputs:
+    azureSubscription: nnazidPipelines # ADO service connection
+    ResourceGroupName: dfdf # rg of the synapse workspace you're deploying into
+    WorkspaceName: dfdf # name of the synapse workspace you're deploying into
+    ToggleOn: true # turns triggers on
+    Triggers: 'jim,bob' # optional comma-separated list of triggers to operate on. if omitted, all triggers will be turned on
